@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "es6", // Define a versão do ECMAScript de destino
+        "module": "commonjs", // Define o sistema de módulos
+        "outDir": "./dist", // Diretório onde os arquivos transpilados serão colocados
+        "rootDir": "./src", // Diretório raiz dos arquivos TypeScript
+        "strict": true, // Ativa uma série de verificações estritas
+        "esModuleInterop": true, // Permite interoperabilidade padrão de módulos ES
+        "skipLibCheck": true, // Pula a verificação de tipos em declarações de bibliotecas
+        "forceConsistentCasingInFileNames": true // Força consistência no casing dos nomes de arquivo
+    },
+    "include": [
+        "src/**/*"
+    ], // Arquivos a serem incluídos na compilação
+    "exclude": [
+        "node_modules",
+        "**/*.test.ts"
+    ] // Arquivos/pastas a serem excluídos
+}
