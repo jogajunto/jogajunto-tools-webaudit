@@ -1,0 +1,1 @@
+export function addToExcel(data: any, options: any): Promise<void>;
