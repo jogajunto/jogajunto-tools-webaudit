@@ -1,0 +1,35 @@
+{
+  "name": "jogajunto-tools-webaudit",
+  "version": "0.1.0",
+  "description": "A Complete Website Audit Solution",
+  "main": "dist/index.js",
+  "scripts": {
+    "prepare": "npm run build",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jogajunto/jogajunto-tools-webaudit.git"
+  },
+  "author": "Rafael de Araujo - DEV Jogajunto",
+  "license": "Apache-2.0",
+  "dependencies": {
+		"nodehun": "^3.0.2",
+		"xlsx": "https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz"
+	},
+  "devDependencies": {
+    "@axe-core/playwright": "^4.8.1",
+		"@playwright/test": "^1.39.0",
+		"@types/node": "^20.8.2",
+    "typescript": "^5.3.2",
+    "prettier": "^3.1.0"
+	},
+  "peerDependencies": {
+    "@playwright/test": "^1.39.0"
+  },
+  "bugs": {
+    "url": "https://github.com/jogajunto/jogajunto-tools-webaudit/issues"
+  },
+  "homepage": "https://github.com/jogajunto/jogajunto-tools-webaudit#readme"
+}
