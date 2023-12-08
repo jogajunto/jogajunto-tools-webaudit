@@ -1,39 +1,30 @@
-
 # jogajunto-tools-webaudit
 
-# Uma Solução Completa de Auditoria para Websites
+### General Description
 
-## Descrição Geral:
+"jogajunto-tools-webaudit" is a comprehensive library developed to automate and facilitate website auditing. Ideal for developers and QA teams, it offers a variety of features to ensure that your site not only meets but exceeds modern standards of performance, accessibility, SEO, and compliance.
 
-O "jogajunto-tools-webaudit" é uma biblioteca abrangente desenvolvida para automatizar e facilitar a auditoria de websites. Projetada com foco em desenvolvedores e equipes de QA, esta ferramenta oferece uma gama de recursos para garantir que seu site não apenas atenda, mas supere os padrões modernos de desempenho, acessibilidade, SEO e conformidade.
+### Key Features
 
-## Principais Funcionalidades:
+- **Accessibility Testing:** Automates checks for accessibility violations, ensuring web inclusivity.
+- **SEO Audit:** Performs detailed SEO analysis, including checks for meta tags and canonical tags to improve search engine visibility.
+- **Performance Verification:** Assesses site loading speed and efficiency with PageSpeed tests, providing comprehensive performance metrics.
+- **Link and Metatags Check:** Verifies the validity of all links on a page and ensures optimal configuration of metatags.
+- **Responsiveness Tests:** Ensures a consistent experience across various devices and screen sizes.
+- **Spelling Error Detection:** Identifies spelling errors in web content, supporting multiple languages including 'pt-BR', 'en', and 'es'.
+- **OG Tags Validation:** Validates the presence and correctness of Open Graph (OG) tags for social media optimization.
+- **Header Tags Evaluation:** Checks header tags on web pages for SEO and structural organization.
+- **Excel Reporting:** Facilitates the export of audit results into Excel format for comprehensive reporting and analysis.
+- **Customizable Audits:** Offers flexibility to perform a wide range of custom website audits based on specific requirements.
 
-### Testes de Acessibilidade: 
+### How It Works
 
-Automatiza a verificação de conformidade com as principais diretrizes de acessibilidade, garantindo uma web mais inclusiva.
+Integrating with the Playwright framework, 'jogajunto-tools-webaudit' enables fast and efficient automated testing. With clear syntax and detailed documentation, it's easy to set up and run checks, obtaining reports that highlight areas for improvement.
 
-### Auditoria de SEO: 
+### Installation
 
-Analisa elementos essenciais de SEO para assegurar que seu site seja facilmente encontrado e bem posicionado nos motores de busca.
+To install the library, use the following command:
 
-### Verificação de Desempenho: 
-Avalia a velocidade de carregamento e eficiência do site, identificando gargalos que podem afetar a experiência do usuário.
-
-## Checagem de Links e Metatags: 
-Garante que todos os links estejam funcionando corretamente e que as metatags estejam otimizadas para melhores práticas web.
-
-### Testes de Responsividade: 
-Certifica que o site oferece uma experiência consistente em diferentes dispositivos e tamanhos de tela.
-
-### Como Funciona:
-Integrando-se perfeitamente com o framework Playwright, o 'jogajunto-tools-webaudit' permite que você execute testes automatizados de forma rápida e eficiente. Com uma sintaxe clara e documentação detalhada, você pode facilmente configurar e executar uma série de verificações, recebendo relatórios detalhados que destacam áreas de melhoria.
-
-### Para Quem é Indicado:
-Se você é desenvolvedor, engenheiro de QA, ou gerente de produto buscando assegurar a mais alta qualidade para seu website, 'jogajunto-tools-webaudit' é a ferramenta ideal. Desde startups até grandes corporações, nossa biblioteca é adaptável para atender às necessidades de projetos de qualquer escala.
-
-### Começando:
-...
-
-### Contribua para o Projeto:
-Acreditamos no poder da colaboração open-source. Se você deseja contribuir para o projeto, confira nosso guia de contribuição. Toda ajuda é bem-vinda, desde melhorias no código até atualizações na documentação.
+```bash
+npm install jogajunto-tools-webaudit
+```
