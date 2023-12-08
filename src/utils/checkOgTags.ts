@@ -13,81 +13,80 @@ import { addToExcel } from '../helpers/addToExcel';
  * @returns {Promise<void>}
  */
 const checkOgTags = async (
-	page: Page,
-	url: string,
-	filePath: string,
-	sheetName: string,
-	sheetColumns: Array<string>
+  page: Page,
+  url: string,
+  filePath: string,
+  sheetName: string,
+  sheetColumns: Array<string>
 ): Promise<void> => {
-	try {
-		await page.goto(url);
+  try {
+    await page.goto(url);
 
-		// Verificar se os elementos meta de og-tags estão presentes na página
-		const ogTags = {
-			'OG Title': await page.$('meta[property="og:title"]'),
-			'OG Description': await page.$('meta[property="og:description"]'),
-			'OG URL': await page.$('meta[property="og:url"]'),
-			'OG Image': await page.$('meta[property="og:image"]'),
-		};
+    // Check if og-tag meta elements are present on the page
+    const ogTags = {
+      'OG Title': await page.$('meta[property="og:title"]'),
+      'OG Description': await page.$('meta[property="og:description"]'),
+      'OG URL': await page.$('meta[property="og:url"]'),
+      'OG Image': await page.$('meta[property="og:image"]'),
+    };
 
-		const missingTags: any = [];
+    const missingTags: any = [];
 
-		for (const [tag, element] of Object.entries(ogTags)) {
-			if (element) {
-				const content = await element.getAttribute('content');
-				expect(content).not.toBeNull();
-			} else {
-				missingTags.push(tag);
-			}
-		}
+    for (const [tag, element] of Object.entries(ogTags)) {
+      if (element) {
+        const content = await element.getAttribute('content');
+        expect(content).not.toBeNull();
+      } else {
+        missingTags.push(tag);
+      }
+    }
 
-		if (missingTags.length > 0) {
-			// Adicionar as tags ausentes à planilha Excel
-			await addToExcel([url, ...missingTags], {
-				filePath: filePath,
-				sheetName: `${sheetName} Ausentes`,
-				columns: ['URL', ...missingTags.map(() => 'Tag Ausente')],
-			});
-		} else {
-			const ogTitleContent = await ogTags['OG Title']?.getAttribute('content');
-			const ogDescriptionContent = await ogTags['OG Description']?.getAttribute(
-				'content'
-			);
-			const ogUrlContent = await ogTags['OG URL']?.getAttribute('content');
-			const ogImageContent = await ogTags['OG Image']?.getAttribute('content');
+    if (missingTags.length > 0) {
+      // Add the missing tags to the Excel spreadsheet
+      await addToExcel([url, ...missingTags], {
+        filePath: filePath,
+        sheetName: `${sheetName} Ausentes`,
+        columns: ['URL', ...missingTags.map(() => 'Tag Ausente')],
+      });
+    } else {
+      const ogTitleContent = await ogTags['OG Title']?.getAttribute('content');
+      const ogDescriptionContent =
+        await ogTags['OG Description']?.getAttribute('content');
+      const ogUrlContent = await ogTags['OG URL']?.getAttribute('content');
+      const ogImageContent = await ogTags['OG Image']?.getAttribute('content');
 
-			// Adicionar os resultados à planilha Excel
-			await addToExcel(
-				[
-					url,
-					ogTitleContent,
-					ogDescriptionContent,
-					ogUrlContent,
-					ogImageContent,
-				],
-				{
-					filePath: filePath,
-					sheetName: sheetName,
-					columns: sheetColumns,
-				}
-			);
+      // Add the results to the Excel spreadsheet
+      await addToExcel(
+        [
+          url,
+          ogTitleContent,
+          ogDescriptionContent,
+          ogUrlContent,
+          ogImageContent,
+        ],
+        {
+          filePath: filePath,
+          sheetName: sheetName,
+          columns: sheetColumns,
+        }
+      );
 
-			// Adicionar verificações adicionais se necessário
-			expect(ogTitleContent?.length).toBeGreaterThan(10); // Exemplo de verificação
-			expect(ogUrlContent).toBe(url); // Certificar de que a og-url é igual à URL da página
-		}
-	} catch (error: unknown) {
-		if (error instanceof Error) {
-			// Adicionar o erro à planilha Excel
-			await addToExcel([url, error.message], {
-				filePath: filePath,
-				sheetName: sheetName,
-				columns: sheetColumns,
-			});
-		} else {
-			console.error("An unknown error occurred");
-		}
-	}
+      // Add additional checks if necessary
+      expect(ogTitleContent?.length).toBeGreaterThan(10); // Verification example
+      expect(ogUrlContent).toBe(url); // Make sure the og-url is the same as the page URL
+    }
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      // Add the error to the Excel spreadsheet
+      await addToExcel([url, error.message], {
+        filePath: filePath,
+        sheetName: sheetName,
+        columns: sheetColumns,
+      });
+    } else {
+      console.error('An unknown error occurred');
+    }
+  }
 };
 
 export default checkOgTags;
