@@ -2,3 +2,5 @@ src/
 tests/
 .gitignore
 .prettierrc
+tsconfig.json
+.vscode/
