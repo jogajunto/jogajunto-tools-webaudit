@@ -17,32 +17,32 @@ import { language } from './types';
  * @returns {Promise<void>}
  */
 const checkSpellingErrors = async (
-	page: Page,
-	url: string,
-	language: language,
-	filePath: string,
-	sheetName: string,
-	sheetColumns: Array<string>,
-	ignoreWords?: Array<string>
+  page: Page,
+  url: string,
+  language: language,
+  filePath: string,
+  sheetName: string,
+  sheetColumns: Array<string>,
+  ignoreWords?: Array<string>
 ): Promise<void> => {
-	await page.goto(url);
-	const textContent: any = await page.evaluate(() => document.body.innerText);
-	const misspelledWords = await checkSpelling(
-		textContent,
-		language,
-		ignoreWords ?? []
-	);
-	if (misspelledWords.length > 0) {
-		misspelledWords.forEach(async (word: string) => {
-			// Adicionar os resultados à planilha Excel ou tomar outras ações conforme necessário
-			await addToExcel([url, word], {
-				filePath: filePath,
-				sheetName: sheetName,
-				columns: sheetColumns,
-			});
-		});
-	}
-	expect(misspelledWords.length).toBe(0);
+  await page.goto(url);
+  const textContent: any = await page.evaluate(() => document.body.innerText);
+  const misspelledWords = await checkSpelling(
+    textContent,
+    language,
+    ignoreWords ?? []
+  );
+  if (misspelledWords.length > 0) {
+    misspelledWords.forEach(async (word: string) => {
+      // Add the results to the Excel spreadsheet or take other actions as needed
+      await addToExcel([url, word], {
+        filePath: filePath,
+        sheetName: sheetName,
+        columns: sheetColumns,
+      });
+    });
+  }
+  expect(misspelledWords.length).toBe(0);
 };
 
 export default checkSpellingErrors;
