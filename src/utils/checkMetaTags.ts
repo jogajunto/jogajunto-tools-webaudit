@@ -1,6 +1,6 @@
-import { Page, expect } from '@playwright/test';
-import { addToExcel } from '../helpers/addToExcel';
-import { MetaTags } from './types';
+import { Page, expect } from "@playwright/test";
+import { MetaTags } from "./types";
+import { addToExcel } from "../helpers/addToExcel";
 
 /**
  * Builds a localized URL by appending a language segment to the base URL.
@@ -13,7 +13,7 @@ const buildLocalizedUrl = (base: string, lang: string) => {
   if (base.includes(langSegment)) {
     return base; // Return the base URL if it already contains the language segment
   }
-  const urlWithoutTrailingSlash = base.endsWith('/') ? base.slice(0, -1) : base;
+  const urlWithoutTrailingSlash = base.endsWith("/") ? base.slice(0, -1) : base;
   return `${urlWithoutTrailingSlash}/${lang}/`;
 };
 
@@ -24,34 +24,34 @@ const buildLocalizedUrl = (base: string, lang: string) => {
  * @async
  */
 const checkTranslateMetaTags = async (page: Page, url: string) => {
-  const html = await page.$('html');
-  const lang = await html?.getAttribute('lang');
+  const html = await page.$("html");
+  const lang = await html?.getAttribute("lang");
 
   expect(lang).not.toBeNull();
-  expect(lang).not.toEqual('');
+  expect(lang).not.toEqual("");
 
   const selectors = [
     'meta[charset="UTF-8"]',
     'meta[name="viewport"][content="width=device-width, initial-scale=1"]',
-    'title',
+    "title",
     `meta[property="og:url"][content="${url}"]`,
   ];
 
   // Validate lang for current lang
   switch (lang) {
-    case 'en-US':
+    case "en-US":
       selectors.push(
-        `link[hreflang="en"][href="${buildLocalizedUrl(url, 'en')}"]`
+        `link[hreflang="en"][href="${buildLocalizedUrl(url, "en")}"]`
       );
       break;
 
-    case 'pt-br':
+    case "pt-br":
       selectors.push(`link[hreflang="pt-br"][href="${url}"]`);
       break;
 
-    case 'es-ES':
+    case "es-ES":
       selectors.push(
-        `link[hreflang="es"][href="${buildLocalizedUrl(url, 'es')}"]`
+        `link[hreflang="es"][href="${buildLocalizedUrl(url, "es")}"]`
       );
       break;
 
@@ -72,71 +72,80 @@ const checkTranslateMetaTags = async (page: Page, url: string) => {
  * @param page - The Playwright Page object representing the page to check.
  * @param url - The URL of the page to validate.
  * @param filePath - The file path where the Excel report will be saved.
- * @param translation - A boolean indicating if translation checks are needed.
  * @param additionalMetaTags - Additional meta tags to be checked, defined in 'MetaTags' type.
+ * @param translation - A boolean indicating if translation checks are needed.
  * @async
  */
 const checkMetaTags = async (
   page: Page,
   url: string,
   filePath: string,
-  translation?: boolean,
-  additionalMetaTags?: MetaTags
+  additionalMetaTags?: MetaTags,
+  translation: boolean = false
 ) => {
-  await page.goto(url);
+  try {
+    await page.goto(url);
 
-  if (translation) {
-    await checkTranslateMetaTags(page, url);
-  }
-
-  const title = await page.title();
-
-  // Expect for a title to exist
-  expect(title).not.toBeNull();
-
-  // Map all important meta tags
-  const metaTags = {
-    Description: await page.$('meta[name="description"]'),
-    Robots: await page.$('meta[name="robots"]'),
-    Viewport: await page.$('meta[name="viewport"]'),
-    ...(additionalMetaTags ?? {}), // Spread syntax to include additionalMetaTags if they exist
-  };
-
-  const missingTags: any = [];
-  const tagContents: any = {};
-
-  for (const [tag, element] of Object.entries(metaTags)) {
-    if (element) {
-      const content = await element.getAttribute('content');
-      tagContents[tag] = content;
-      if (tag === 'Description') {
-        // Checks if the description tag has less than 160 characters
-        expect(content?.length).toBeLessThan(160);
-
-        // Make sure the description is a minimum length
-        expect(content?.length).toBeGreaterThan(15);
-      }
-      expect(content).not.toBeNull();
-    } else {
-      missingTags.push(tag);
+    if (translation) {
+      await checkTranslateMetaTags(page, url);
     }
-  }
 
-  // Add the missing tags to the Excel spreadsheet
-  if (missingTags.length > 0) {
-    await addToExcel([url, ...missingTags], {
+    const title = await page.title();
+
+    // Expect for a title to exist
+    expect(title).not.toBeNull();
+
+    // Map all important meta tags
+    const metaTags = {
+      Description: await page.$('meta[name="description"]'),
+      Robots: await page.$('meta[name="robots"]'),
+      Viewport: await page.$('meta[name="viewport"]'),
+      ...(additionalMetaTags ?? {}), // Spread syntax to include additionalMetaTags if they exist
+    };
+
+    const missingTags: any = [];
+    const tagContents: any = {};
+
+    for (const [tag, element] of Object.entries(metaTags)) {
+      if (element) {
+        const content = await element.getAttribute("content");
+        tagContents[tag] = content;
+        if (tag === "Description") {
+          // Checks if the description tag has less than 160 characters
+          expect(content?.length).toBeLessThan(160);
+
+          // Make sure the description is a minimum length
+          expect(content?.length).toBeGreaterThan(15);
+        }
+        expect(content).not.toBeNull();
+      } else {
+        missingTags.push(tag);
+      }
+    }
+
+    // Add the missing tags to the Excel spreadsheet
+    if (missingTags.length > 0) {
+      await addToExcel([url, ...missingTags], {
+        filePath: filePath,
+        sheetName: "Missing Tags",
+        columns: ["URL", ...missingTags.map(() => "Missing Tag")],
+      });
+    }
+
+    // Add the results to the Excel spreadsheet
+    await addToExcel([url, ...Object.values(tagContents)], {
       filePath: filePath,
-      sheetName: 'Tags Ausentes',
-      columns: ['URL', ...missingTags.map(() => 'Tag Ausente')],
+      sheetName: "Tags Found",
+      columns: ["URL", ...Object.keys(tagContents)],
     });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    } else {
+      console.error("An unknown error occurred");
+    }
+    throw error;
   }
-
-  // Add the results to the Excel spreadsheet
-  await addToExcel([url, ...Object.values(tagContents)], {
-    filePath: filePath,
-    sheetName: 'Tags Encontradas',
-    columns: ['URL', ...Object.keys(tagContents)],
-  });
 };
 
 export default checkMetaTags;
