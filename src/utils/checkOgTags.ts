@@ -1,5 +1,5 @@
-import { Page, expect } from '@playwright/test';
-import { addToExcel } from '../helpers/addToExcel';
+import { Page, expect } from "@playwright/test";
+import { addToExcel } from "../helpers/addToExcel";
 
 /**
  * Check Og Tags from website url
@@ -7,34 +7,30 @@ import { addToExcel } from '../helpers/addToExcel';
  * @param {Page} page - The page context passed in the test file
  * @param {string} url - The url where the test will be applied
  * @param {string} filePath - The filePath where the xlsx will be saved
- * @param {string} sheetName - xlsx spreadsheet tab name
- * @param {Array<string>} sheetColumns - Array of map columns for the xlsx spreadsheet
  *
  * @returns {Promise<void>}
  */
 const checkOgTags = async (
   page: Page,
   url: string,
-  filePath: string,
-  sheetName: string,
-  sheetColumns: Array<string>
+  filePath: string
 ): Promise<void> => {
   try {
     await page.goto(url);
 
     // Check if og-tag meta elements are present on the page
     const ogTags = {
-      'OG Title': await page.$('meta[property="og:title"]'),
-      'OG Description': await page.$('meta[property="og:description"]'),
-      'OG URL': await page.$('meta[property="og:url"]'),
-      'OG Image': await page.$('meta[property="og:image"]'),
+      "OG Title": await page.$('meta[property="og:title"]'),
+      "OG Description": await page.$('meta[property="og:description"]'),
+      "OG URL": await page.$('meta[property="og:url"]'),
+      "OG Image": await page.$('meta[property="og:image"]'),
     };
 
     const missingTags: any = [];
 
     for (const [tag, element] of Object.entries(ogTags)) {
       if (element) {
-        const content = await element.getAttribute('content');
+        const content = await element.getAttribute("content");
         expect(content).not.toBeNull();
       } else {
         missingTags.push(tag);
@@ -45,15 +41,15 @@ const checkOgTags = async (
       // Add the missing tags to the Excel spreadsheet
       await addToExcel([url, ...missingTags], {
         filePath: filePath,
-        sheetName: `${sheetName} Ausentes`,
-        columns: ['URL', ...missingTags.map(() => 'Tag Ausente')],
+        sheetName: "OG Missing Tags",
+        columns: ["URL", ...missingTags.map(() => "Missing Tag")],
       });
     } else {
-      const ogTitleContent = await ogTags['OG Title']?.getAttribute('content');
+      const ogTitleContent = await ogTags["OG Title"]?.getAttribute("content");
       const ogDescriptionContent =
-        await ogTags['OG Description']?.getAttribute('content');
-      const ogUrlContent = await ogTags['OG URL']?.getAttribute('content');
-      const ogImageContent = await ogTags['OG Image']?.getAttribute('content');
+        await ogTags["OG Description"]?.getAttribute("content");
+      const ogUrlContent = await ogTags["OG URL"]?.getAttribute("content");
+      const ogImageContent = await ogTags["OG Image"]?.getAttribute("content");
 
       // Add the results to the Excel spreadsheet
       await addToExcel(
@@ -66,8 +62,8 @@ const checkOgTags = async (
         ],
         {
           filePath: filePath,
-          sheetName: sheetName,
-          columns: sheetColumns,
+          sheetName: "OG Tags",
+          columns: ["URL", "OG Title", "OG Description", "OG URL", "OG Image"],
         }
       );
 
@@ -77,15 +73,11 @@ const checkOgTags = async (
     }
   } catch (error: unknown) {
     if (error instanceof Error) {
-      // Add the error to the Excel spreadsheet
-      await addToExcel([url, error.message], {
-        filePath: filePath,
-        sheetName: sheetName,
-        columns: sheetColumns,
-      });
+      console.error(error.message);
     } else {
-      console.error('An unknown error occurred');
+      console.error("An unknown error occurred");
     }
+    throw error;
   }
 };
 
