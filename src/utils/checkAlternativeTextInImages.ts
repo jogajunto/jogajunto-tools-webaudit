@@ -1,59 +1,54 @@
-import { Page, expect } from '@playwright/test';
-import { addToExcel } from '../helpers/addToExcel';
+import { Page, expect } from "@playwright/test";
+import { addToExcel } from "../helpers/addToExcel";
 
 /**
- * Check alternative text in images from html page
+ * Checks and reports images without alternative text on a given web page.
  *
- * @param {Page} page - The page context passed in the test file
- * @param {string} url - The url where the test will be applied
- * @param {string} filePath - The filePath where the xlsx will be saved
- * @param {string} sheetName - xlsx spreadsheet tab name
- * @param {Array<string>} sheetColumns - Array of map columns for the xlsx spreadsheet
- *
- * @returns {Promise<void>}
+ * @param {Page} page - The Playwright Page object to interact with the web page.
+ * @param {string} url - The URL of the web page to be tested.
+ * @param {string} filePath - The file path where the Excel report will be saved.
+ * @param {boolean} testExpect - Optional parameter to decide if the test should assert the expectation (default is true).
+ * @returns {Promise<void>} A promise that resolves to void upon the completion of the function.
  */
 const checkAlternativeTextInImages = async (
   page: Page,
   url: string,
   filePath: string,
-  sheetName: string,
-  sheetColumns: Array<string>
+  testExpect: boolean = true
 ): Promise<void> => {
   try {
     await page.goto(url);
 
     // Check if all images have alt text
-    const imagesWithoutAlt = await page.$$eval('img', (images) =>
+    const imagesWithoutAlt = await page.$$eval("img", (images) =>
       images.filter((img) => !img.alt).map((img) => img.outerHTML)
     );
     if (imagesWithoutAlt.length > 0) {
-      // Using regular expression to extract value from src attribute
+      // Extracts the source URLs of images missing alternative text.
       const imgSrcs = imagesWithoutAlt.map((imgTag) => {
-        // TODO - validate that it is really an image url before trying to get the src value
-        const match = imgTag.match(/src="(.*?)"/);
+        const match = imgTag.match(/src="(.*?)"/); // Regular expression to extract 'src' attribute.
         return match ? match[1] : null; // Returns the value of the src attribute if found
       });
 
-      // Add the results to the Excel spreadsheet
-      await addToExcel([url, imgSrcs.join(', ')], {
+      // Saves the results to an Excel spreadsheet.
+      await addToExcel([url, imgSrcs.join(", ")], {
         filePath: filePath,
-        sheetName: sheetName,
-        columns: sheetColumns,
+        sheetName: "Images without alternative text",
+        columns: ["URL", "Images without Alt"],
       });
     }
 
-    expect(imagesWithoutAlt.length).toBe(0);
+    // Asserts that no images are missing alternative text if testExpect is true.
+    if (testExpect) {
+      expect(imagesWithoutAlt.length).toBe(0);
+    }
   } catch (error: unknown) {
     if (error instanceof Error) {
-      // Add the error to the Excel spreadsheet
-      await addToExcel([url, error.message], {
-        filePath: filePath,
-        sheetName: sheetName,
-        columns: sheetColumns,
-      });
+      console.error(error.message);
     } else {
-      console.error('An unknown error occurred');
+      console.error("An unknown error occurred");
     }
+    throw error;
   }
 };
 
