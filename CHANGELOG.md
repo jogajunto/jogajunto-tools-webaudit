@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.3.0] - 2023-12-13
+
+### Added
+
+- **Utils**
+  - `checkCanonicalTag.ts`: Checks the canonical tag of a webpage and reports if it's duplicated or incorrect.
+  - `checkFontsWoff2.ts`: Checks for the successful loading of .woff2 font files on a webpage.
+  - `checkTagManager.ts`: Checks for the presence of a specific Tag Manager tag on a webpage.
+  - `checkImagesLazyWidthHeight.ts`: Checks if images on a webpage are using lazy loading and have width and height attributes set.
+
+### Modified
+
+- Refactored `checkAlternativeTextInImages.ts` to improve the process of checking and reporting images without alternative text.
+- Enhanced `checkHeaderTags.ts` for better accuracy in checking the correct usage of H1 header tags.
+- Updated `checkMetaTags.ts` for more comprehensive meta tags checking, including translation support.
+- Improved `checkOgTags.ts` to better identify missing OG tags and handle errors.
+- Enhanced `checkValidLinks.ts` to more effectively validate the links on a webpage.
+- Updated `.prettierrc` configuration for improved code formatting.
+- Modified `src/index.ts` for new function imports and exports.
+- Updated various files for improved documentation and comments.
+
+### Fixed
+
+- Various bug fixes and performance improvements in existing utility functions.
+
 ## [0.2.0] - 2023-12-08
 
 ### Added
