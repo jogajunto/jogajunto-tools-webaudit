@@ -16,6 +16,10 @@
 - **Header Tags Evaluation:** Checks header tags on web pages for SEO and structural organization.
 - **Excel Reporting:** Facilitates the export of audit results into Excel format for comprehensive reporting and analysis.
 - **Customizable Audits:** Offers flexibility to perform a wide range of custom website audits based on specific requirements.
+- **Woff2 Font File Verification:** Checks for successful loading of Woff2 font files, enhancing webpage's performance and visual consistency.
+- **Tag Manager Validation:** Ensures the correct implementation of Google Tag Manager tags for effective tracking and marketing insights.
+- **Lazy Loading and Image Attribute Verification:** Verifies that images on the site use lazy loading and have proper width and height attributes set, optimizing page load times and user experience.
+- **Canonical Tag Checks:** Verifies the correct use of canonical tags to prevent duplicate content issues and improve SEO.
 
 ### How It Works
 
