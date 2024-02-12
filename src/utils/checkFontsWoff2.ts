@@ -58,6 +58,11 @@ const checkFontsWoff2 = async (
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(error.message);
+      await addToExcel([url, error.message], {
+        filePath: filePath,
+        sheetName: "Check Fonts Errors",
+        columns: ["URL", "Error"],
+      });
     } else {
       console.error("An unknown error occurred"); // Logs a generic error message for unknown errors.
     }
