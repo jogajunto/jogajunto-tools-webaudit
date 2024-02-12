@@ -33,12 +33,19 @@ const checkTagManager = async (
 
     // Validates that the Tag Manager tag was found on the page.
     expect(foundTag).toBeTruthy();
+
+    await addToExcel([url, idTagCode], {
+      filePath: filePath,
+      sheetName: "Tag Manager",
+      columns: ["URL", "ID Tag Code"],
+    });
   } catch (error: unknown) {
     if (error instanceof Error) {
+      console.error(error.message);
       // Logs the error and adds it to the Excel spreadsheet.
       await addToExcel([url, error.message], {
         filePath: filePath,
-        sheetName: "",
+        sheetName: "Tag Manager Error",
         columns: ["URL", "Error"],
       });
     } else {
