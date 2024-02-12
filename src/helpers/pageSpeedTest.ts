@@ -1,21 +1,21 @@
-import { addToExcel } from './addToExcel';
+import { addToExcel } from "./addToExcel";
 
 /**
  * Performs a PageSpeed test on a given URL and logs the results.
- * @param testUrl - The URL of the page to test.
+ * @param url - The URL of the page to test.
  * @param testStrategy - The strategy to use for the PageSpeed test (e.g., 'mobile', 'desktop').
  * @param filePath - The file path where the Excel report will be saved.
  * @async
  */
 export async function pageSpeedTest(
-  testUrl: string,
+  url: string,
   testStrategy: string,
   filePath: string
 ) {
   try {
     // Fetches the PageSpeed Insights data from the Google API.
     const response = await fetch(
-      `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${testUrl}&strategy=${testStrategy}`
+      `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${url}&strategy=${testStrategy}`
     );
     if (response.ok) {
       // Processes the response data if the request was successful.
@@ -25,17 +25,17 @@ export async function pageSpeedTest(
 
       // Extracts specific metrics from the PageSpeed results.
       const metrics = json.lighthouseResult.audits;
-      const fcp = metrics['first-contentful-paint'].displayValue;
-      const lcp = metrics['largest-contentful-paint-element'].displayValue;
-      const tti = metrics['interactive'].displayValue;
-      const cls = metrics['cumulative-layout-shift'].displayValue;
-      const tbw = metrics['total-byte-weight'].displayValue;
-      const unusedJs = metrics['unused-javascript'].displayValue;
+      const fcp = metrics["first-contentful-paint"].displayValue;
+      const lcp = metrics["largest-contentful-paint-element"].displayValue;
+      const tti = metrics["interactive"].displayValue;
+      const cls = metrics["cumulative-layout-shift"].displayValue;
+      const tbw = metrics["total-byte-weight"].displayValue;
+      const unusedJs = metrics["unused-javascript"].displayValue;
 
       // Saves the extracted metrics to an Excel file.
       await addToExcel(
         [
-          testUrl,
+          url,
           testStrategy,
           pageSpeedScore.toString(),
           fcp,
@@ -47,29 +47,33 @@ export async function pageSpeedTest(
         ],
         {
           filePath: filePath,
-          sheetName: 'PageSpeed Metrics',
+          sheetName: "PageSpeed Metrics",
           columns: [
-            'URL',
-            'Device',
-            'Score',
-            'FCP',
-            'LCP',
-            'TTI',
-            'CLS',
-            'Total Byte Weight',
-            'Unused JS',
+            "URL",
+            "Device",
+            "Score",
+            "FCP",
+            "LCP",
+            "TTI",
+            "CLS",
+            "Total Byte Weight",
+            "Unused JS",
           ],
         }
       );
     } else {
       // Logs an error message if the HTTP request failed.
-      console.error('HTTP-Error: ' + response.status);
+      console.error("HTTP-Error: " + response.status);
     }
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error(error.message);
+      await addToExcel([url, error.message], {
+        filePath: filePath,
+        sheetName: "PageSpeed Metrics Error",
+        columns: ["URL", "Error"],
+      });
     } else {
-      console.error('An unknown error occurred');
+      console.error("An unknown error occurred");
     }
   }
 }
