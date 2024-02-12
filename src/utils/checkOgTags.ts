@@ -74,6 +74,12 @@ const checkOgTags = async (
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(error.message);
+      // Optionally, add error details to an Excel file for further analysis.
+      await addToExcel([url, error.message], {
+        filePath: filePath,
+        sheetName: "OG Tags Error",
+        columns: ["URL", "Error"],
+      });
     } else {
       console.error("An unknown error occurred");
     }
