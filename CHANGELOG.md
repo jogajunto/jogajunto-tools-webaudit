@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.4.0] - 2024-02-12
+
+### Added
+
+- New utility checkFavIcons to verify the presence of favorite icons on web pages.
+adjustColumnWidths function in addToExcel to automatically adjust column widths based on content.
+- New utility checkButtonAndLinkStates to check hover, focus, and active states of all buttons and links on a web page, storing the styles of these states for each element and adding the results to an Excel file.
+- New utility checkNavigationButtons to verify the functionality of "Skip to Content" and "Back to Top" buttons on web pages, including checking specific classes of the buttons and adding the results to an Excel report.
+- New utility checkNavigationKeyboardTab to test keyboard navigation using the Tab key on focusable elements of a page, with the option to exclude elements within specified classes and add the results to an Excel file.
+
+### Modified
+
+- Updated @axe-core/playwright to ^4.8.4 and @playwright/test to ^1.41.2.
+- Refactoring and documentation improvement of addToExcel.
+- Improvements in checkAccessibilityViolations, checkAlternativeTextInImages, checkCanonicalTag, checkFontsWoff2, including error handling and adjustments according to best practices.
+
+### Fixed
+
+- Fixes in utilities for better error handling and increased checking precision.
+- Updates in types.ts to better support new features and fixes implemented.
+
 ## [0.3.0] - 2023-12-13
 
 ### Added
