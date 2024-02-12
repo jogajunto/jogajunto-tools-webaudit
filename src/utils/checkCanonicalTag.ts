@@ -56,7 +56,12 @@ const checkCanonicalTag = async (
     }
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error(error.message);
+      console.error("Error when checking canonical tag:", error.message);
+      await addToExcel([url, error.message], {
+        filePath: filePath,
+        sheetName: "Tag canonica Error",
+        columns: ["URL", "Error"],
+      });
     } else {
       console.error("An unknown error occurred");
     }
