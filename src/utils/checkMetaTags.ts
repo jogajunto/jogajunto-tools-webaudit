@@ -100,6 +100,7 @@ const checkMetaTags = async (
       Description: await page.$('meta[name="description"]'),
       Robots: await page.$('meta[name="robots"]'),
       Viewport: await page.$('meta[name="viewport"]'),
+      Title: await page.$("title"),
       ...(additionalMetaTags ?? {}), // Spread syntax to include additionalMetaTags if they exist
     };
 
@@ -109,7 +110,6 @@ const checkMetaTags = async (
     for (const [tag, element] of Object.entries(metaTags)) {
       if (element) {
         const content = await element.getAttribute("content");
-        tagContents[tag] = content;
         if (tag === "Description") {
           // Checks if the description tag has less than 160 characters
           expect(content?.length).toBeLessThan(160);
@@ -117,7 +117,13 @@ const checkMetaTags = async (
           // Make sure the description is a minimum length
           expect(content?.length).toBeGreaterThan(15);
         }
-        expect(content).not.toBeNull();
+        // Title is validated in initial test
+        if (tag !== "Title") {
+          expect(content).not.toBeNull();
+          tagContents[tag] = content;
+        } else {
+          tagContents[tag] = await element.textContent();
+        }
       } else {
         missingTags.push(tag);
       }
@@ -127,20 +133,34 @@ const checkMetaTags = async (
     if (missingTags.length > 0) {
       await addToExcel([url, ...missingTags], {
         filePath: filePath,
-        sheetName: "Missing Tags",
+        sheetName: "Meta tags Missing",
         columns: ["URL", ...missingTags.map(() => "Missing Tag")],
       });
     }
 
+    // Get keys to add in header columns
+    const keysToExcel = Object.keys(tagContents).filter(
+      (item) => item !== null
+    );
+    // Get values to add in content rows
+    const valuesToExcel = Object.values(tagContents).filter(
+      (item) => item !== null
+    );
+
     // Add the results to the Excel spreadsheet
-    await addToExcel([url, ...Object.values(tagContents)], {
+    await addToExcel([url, ...valuesToExcel], {
       filePath: filePath,
-      sheetName: "Tags Found",
-      columns: ["URL", ...Object.keys(tagContents)],
+      sheetName: "Meta tags Found",
+      columns: ["URL", ...keysToExcel],
     });
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(error.message);
+      await addToExcel([url, error.message], {
+        filePath: filePath,
+        sheetName: "Meta tags error",
+        columns: ["URL", "Error"],
+      });
     } else {
       console.error("An unknown error occurred");
     }
